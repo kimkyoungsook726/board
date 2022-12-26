@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardNs">
+<select id="getList" resultType="boardVo">
+	select * from board 
+</select>
+
+<select id="getBoard" parameterType="int" resultType="boardVo">
+	select * from board where boardNum = #{boardNum}
+</select>
+
+<insert id="addBoard" parameterType="BoardVo">
+	insert into board values(board_seq.nextval, #{boardTitle}, #{irum}, #{boardPwd}, #{boardContent}, sysdate) 
+</insert>
+
+<delete id="delBoard" parameterType="int">
+	delete from board where boardNum=#{boardNum}
+</delete>
+
+</mapper>

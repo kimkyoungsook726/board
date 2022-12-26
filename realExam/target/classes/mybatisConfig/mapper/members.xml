@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="membersNs">
+  <!-- 전체 회원 정보를 반환 쿼리=>관리자 -->
+  <select id="selectAll" resultType="memberVo">
+    select * from members
+  </select>
+  <!-- 한사람의 회원 정보를 반환 쿼리 =>회원로그인, 수정 -->
+  <select id="selectOne" parameterType="string" resultType="memberVo">
+  	select * from members where memId=#{memId}
+  </select>
+  
+  <delete id="deleteAll">
+  	delete from members
+  </delete>
+  
+  <delete id="deleteOne" parameterType="string" >
+  	delete from members where memId= #{memId}
+  </delete>
+  
+  <insert id="addOne" parameterType="memberVo">
+  	insert into members values(#{memId},#{memName},#{memPwd}, #{phone},sysdate)
+  </insert>
+  
+  <update id="updateOne" parameterType="memberVo">
+  	update members set memName= #{memName}, memPwd = #{memPwd}, phone=#{phone} where memId = #{memId}
+  </update>
+</mapper>

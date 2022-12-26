@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:c="http://www.springframework.org/schema/c"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<context:property-placeholder location="classpath:dbConfig/database.properties"/>
+		
+		<bean class="com.zaxxer.hikari.HikariConfig" id="hikariConfig">
+			  <property name="driverClassName" value="${db.driverClass}" />
+			  <property name="jdbcUrl" value="${db.url}" />
+			  <property name="username" value="${db.userName}" />
+			  <property name="password" value="${db.password}" />
+		</bean>
+		<bean class="com.zaxxer.hikari.HikariDataSource" id="dataSource" c:configuration-ref="hikariConfig" destroy-method="close" />
+		
+		
+		<!-- <bean class="org.springframework.jdbc.core.JdbcTemplate" id="jdbcTemplate">
+			<constructor-arg ref="dataSource"></constructor-arg>
+		</bean> -->
+		<bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"></property>
+			<property name="configLocation" value="classpath:mybatisConfig/mapConfig.xml"></property>
+			<property name="mapperLocations">
+				<list>
+					<value>classpath:mybatisConfig/mapper/members.xml</value>
+					<value>classpath:mybatisConfig/mapper/sampleDao.xml</value>
+					<value>classpath:mybatisConfig/mapper/board.xml</value>
+				</list>
+			</property>
+		</bean>
+		<bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSession">
+		<constructor-arg ref="sqlSessionFactoryBean"></constructor-arg>
+		</bean>
+		<context:component-scan base-package="kr.co.onlyone"></context:component-scan>
+
+	<bean id="performanceAdvice" class="kr.co.onlyone.aop.xml.PerformanceAdvice"></bean>
+	<aop:config>
+		<aop:aspect id="traceAspect" ref="performanceAdvice">
+			<aop:around method="trace" pointcut="execution(public * kr.co.onlyone.service..*.*(..))"/>
+		</aop:aspect>
+	</aop:config>
+	<aop:aspectj-autoproxy />
+</beans>
